@@ -1,0 +1,75 @@
+# ========================
+# Node / NPM
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.development
+.env.production
+
+# ========================
+# Build Outputs
+# ========================
+dist/
+build/
+out/
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+
+# ========================
+# OS / Editor Files
+# ========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ========================
+# React / Vite / Next
+# ========================
+.vite/
+.next/
+.cache/
+
+# ========================
+# Testing
+# ========================
+coverage/
+
+# ========================
+# InstantDB / Firebase / BaaS
+# ========================
+.instantdb/
+*.instantdb
+instantdb.config.local.js
+
+# ========================
+# WebSocket / Runtime
+# ========================
+ws-data/
+socket-logs/
+
+# ========================
+# MongoDB
+# ========================
+data/
+dump/
+
+# ========================
+# Temporary / Misc
+# ========================
+tmp/
+temp/
+*.swp
