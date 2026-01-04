@@ -36,27 +36,39 @@ function App() {
   };
 
   
-  if (!user) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div>
-          <h2 className="mb-2 text-lg font-semibold">Enter your name</h2>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="border px-3 py-2 mr-2 rounded"
-            placeholder="Your name"
-          />
-          <button
-            onClick={createUser}
-            className="px-4 py-2 bg-black text-white rounded"
-          >
-            Continue
-          </button>
-        </div>
+if (!user) {
+  return (
+    <div className="h-screen flex items-center justify-center bg-orange-50">
+      {/* Card */}
+      <div className="w-[320px] bg-white rounded-xl shadow-lg p-6 border border-orange-100">
+        
+        {/* Heading */}
+        <h2 className="text-xl font-semibold text-center text-orange-600 mb-2">
+          Welcome 👋
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-5">
+          Enter your name to continue
+        </p>
+
+        {/* Input */}
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full border border-orange-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none px-3 py-2 rounded-lg mb-4 transition"
+          placeholder="Your name"
+        />
+
+        {/* Button */}
+        <button
+          onClick={createUser}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg transition duration-200"
+        >
+          Continue
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <BrowserRouter>
