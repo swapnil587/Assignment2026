@@ -1,74 +1,196 @@
-# Assignment2026
+# Assignment2026 – React.js Project Guide
 
-All about **React.js** – from setup to running and using the application.
-
----
-
-## 📌 Prerequisites
-
-Before starting, make sure you have the following installed on your PC:
-
-### 1️⃣ Node.js & npm
-
-* Download Node.js (LTS version recommended)
-* Node.js comes with **npm** (Node Package Manager)
-
-Check installation:
-
-```bash
-node -v
-npm -v
-```
-
-### 2️⃣ Code Editor
-
-* Recommended: **VS Code**
-* Useful extensions:
-
-  * ES7+ React Snippets
-  * Prettier
-  * ESLint
-
-### 3️⃣ Git (Optional but Recommended)
-
-```bash
-git --version
-```
+This README is **specifically written for THIS project**, based on the actual folder structure and features you have implemented.
 
 ---
 
-## 🚀 Project Setup (From Scratch)
+## 📌 Project Overview
 
-### Step 1: Create React App (Vite – Recommended)
+**Assignment2026** is a React.js-based image interaction platform.
 
-```bash
-npm create vite@latest assignment2026
+### Key Features
+
+* 🏠 **Home Page** – Browse images from Unsplash
+* 💾 **Save Images** – Users can save images
+* ❤️ **React with Emojis** – Emoji reactions (like, fire, laugh, etc.)
+* 💬 **Comments System** – Add, edit, and delete comments
+* 📰 **Feed / Saved Page** – View all saved images with reactions & comments
+* 👀 **Public Visibility** – Other users can see who reacted and commented
+
+---
+
+## 🧱 Tech Stack Used
+
+| Technology   | Purpose            |
+| ------------ | ------------------ |
+| React.js     | Frontend UI        |
+| Vite         | Fast build tool    |
+| Tailwind CSS | Styling            |
+| InstantDB    | Real-time database |
+| Unsplash API | Image source       |
+| Emoji Picker | Emoji reactions    |
+
+---
+
+## 📂 Folder Structure Explained
+
+```
+Assignment2026/
+│
+├── Frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── api/                # Unsplash API calls
+│   │   ├── assets/             # Images & static assets
+│   │   ├── components/
+│   │   │   ├── Comments/
+│   │   │   │   └── CommentsPanel.jsx
+│   │   │   ├── gallery/
+│   │   │   │   └── GalleryGrid.jsx
+│   │   │   ├── Reaction/
+│   │   │   │   └── EmojiBar.jsx
+│   │   │   ├── AddPost.jsx
+│   │   │   ├── Feed.jsx
+│   │   │   ├── FeedItem.jsx
+│   │   │   └── Header.jsx
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx     # Image browsing page
+│   │   │   └── FeedPage.jsx     # Saved / Feed page
+│   │   ├── db.js                # InstantDB connection
+│   │   ├── instant.db.ts        # InstantDB config
+│   │   ├── instant.schema.ts    # DB schema
+│   │   ├── instant.perms.ts     # Permissions
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── .env
+│   └── package.json
+└── README.md
 ```
 
-Choose:
+---
 
-* Framework: **React**
-* Variant: **JavaScript** or **JavaScript + SWC**
+## 🏠 Home Page (HomePage.jsx)
 
-### Step 2: Move into Project Folder
+### What happens on Home Page?
 
-```bash
-cd assignment2026
+* Images are fetched from **Unsplash API**
+* User can:
+
+  * View images
+  * Save images
+  * React with emojis
+  * Add comments
+
+### Main Components Used
+
+* `GalleryGrid.jsx`
+* `EmojiBar.jsx`
+* `CommentsPanel.jsx`
+
+---
+
+## 📰 Feed / Saved Page (FeedPage.jsx)
+
+### Purpose
+
+The Feed page shows **all saved images** along with:
+
+* Who reacted
+* Which emoji reactions
+* How many reactions
+* Who commented
+* Editable comments (only owner)
+
+### Features
+
+* Pagination
+* Emoji reactions visible to all
+* Comment edit & delete
+* Modal view for image focus
+
+---
+
+## 😀 Emoji Reactions (EmojiBar.jsx)
+
+### How Emoji Reactions Work
+
+* Emoji Picker allows selecting any emoji
+* Only **one reaction per user per image**
+* Clicking same emoji again removes reaction
+* Reaction count updates in real-time
+
+### Stored Data
+
+* Emoji
+* User ID
+* Image ID
+* Timestamp
+
+---
+
+## 💬 Comments System
+
+### Capabilities
+
+* Add comments
+* Edit own comments
+* Delete own comments
+* See other users' comments
+
+### Component
+
+* `CommentsPanel.jsx`
+
+---
+
+## 🗄 Database (InstantDB)
+
+### Entities
+
+* images
+* users
+* reactions
+* comments
+
+### Benefits
+
+* Real-time updates
+* Simple schema
+* Secure permissions
+
+---
+
+## 🔑 Environment Setup (.env)
+
+```
+VITE_UNSPLASH_ACCESS_KEY=your_unsplash_key_here
 ```
 
-### Step 3: Install Dependencies
+---
 
-```bash
+## ⚙️ How to Run Project Locally
+
+### Step 1: Clone Repository
+
+```
+git clone <your-github-repo-url>
+cd Assignment2026/Frontend
+```
+
+### Step 2: Install Dependencies
+
+```
 npm install
 ```
 
-### Step 4: Start Development Server
+### Step 3: Start Development Server
 
-```bash
+```
 npm run dev
 ```
 
-Open browser and visit:
+Open browser at:
 
 ```
 http://localhost:5173
@@ -76,192 +198,32 @@ http://localhost:5173
 
 ---
 
-## 📂 Project Structure Explained
+## 🧠 What You Learn From This Project
 
-```text
-assignment2026/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── pages/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── package.json
-├── vite.config.js
-└── README.md
-```
-
-### Important Files
-
-* `main.jsx` → Entry point
-* `App.jsx` → Root component
-* `components/` → Reusable UI components
-* `pages/` → Page-level components
+* React component architecture
+* State management with hooks
+* API integration
+* Real-time databases
+* UI/UX design
+* Modular project structure
 
 ---
 
-## 🧠 React Core Concepts (Must Know)
+## 🎯 Future Improvements
 
-### 1️⃣ Components
-
-```jsx
-function Hello() {
-  return <h1>Hello React</h1>;
-}
-```
-
-### 2️⃣ Props
-
-```jsx
-function Card({ title }) {
-  return <h2>{title}</h2>;
-}
-```
-
-### 3️⃣ State (`useState`)
-
-```jsx
-import { useState } from "react";
-
-const Counter = () => {
-  const [count, setCount] = useState(0);
-  return <button onClick={() => setCount(count + 1)}>{count}</button>;
-};
-```
-
-### 4️⃣ Effects (`useEffect`)
-
-```jsx
-useEffect(() => {
-  console.log("Component Mounted");
-}, []);
-```
+* Authentication system
+* User profiles
+* Search & filters
+* Image categories
+* Notifications
 
 ---
 
-## 🌐 API Usage in React
+## 👨‍💻 Author
 
-### Fetching Data
-
-```jsx
-useEffect(() => {
-  fetch("https://api.example.com/data")
-    .then(res => res.json())
-    .then(data => console.log(data));
-}, []);
-```
-
-### Best Practices
-
-* Always handle loading & error states
-* Keep API logic inside `useEffect`
+**Assignment2026 – React.js Project**
+Designed & developed for learning and academic submission.
 
 ---
 
-## 🎨 Styling Options
-
-### 1️⃣ CSS
-
-```css
-body { background: #f9f9f9; }
-```
-
-### 2️⃣ Tailwind CSS (Recommended)
-
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-```
-
-### 3️⃣ Component Libraries
-
-* Material UI
-* ShadCN UI
-* Ant Design
-
----
-
-## 🧪 Testing & Linting
-
-```bash
-npm run lint
-```
-
-Optional:
-
-* Jest
-* React Testing Library
-
----
-
-## 📦 Build for Production
-
-```bash
-npm run build
-```
-
-Preview build:
-
-```bash
-npm run preview
-```
-
----
-
-## ☁️ Deployment Options
-
-* Netlify
-* Vercel
-* GitHub Pages
-
-Example (Vercel):
-
-```bash
-vercel
-```
-
----
-
-## 🧑‍💻 How to Use This App
-
-1. Clone repository
-2. Install dependencies
-3. Run development server
-4. Edit components in `src/`
-5. Add new features using React hooks
-
----
-
-## 📘 Learning Path (Recommended)
-
-1. JSX
-2. Components & Props
-3. State & Events
-4. Hooks
-5. API Integration
-6. Routing (React Router)
-7. Performance Optimization
-
----
-
-## ✅ Common Errors & Fixes
-
-| Error              | Solution             |
-| ------------------ | -------------------- |
-| npm not recognized | Install Node.js      |
-| Blank screen       | Check console errors |
-| Module not found   | Run npm install      |
-
----
-
-## 🏁 Conclusion
-
-This project demonstrates **complete React.js fundamentals** from setup to deployment. Perfect for beginners and assignments.
-
----
-
-### ✨ Author
-
-Assignment2026 – React.js
+✅ This README is **project-specific**, **exam-ready**, and **GitHub-ready**.
