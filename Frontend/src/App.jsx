@@ -44,7 +44,7 @@ if (!user) {
         
         {/* Heading */}
         <h2 className="text-xl font-semibold text-center text-orange-600 mb-2">
-          Welcome 👋
+          Welcome 
         </h2>
         <p className="text-sm text-gray-500 text-center mb-5">
           Enter your name to continue
