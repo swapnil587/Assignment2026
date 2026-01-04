@@ -7,16 +7,28 @@ export default function Home() {
     images: {},
   });
 
-  const saveImage = async (img) => {
-    await db.transact([
-      db.tx.images[id()].update({
-        createdAt: Date.now(),
-        unsplashId: img.unsplashId,
-        url: img.url,
-        description: img.description,
-      }),
-    ]);
-  };
+const saveImage = async (img) => {
+  // 1️⃣ Prevent duplicate saves
+  const existing = data?.images?.find(
+    (i) => i.unsplashId === img.id
+  );
+  if (existing) return;
+
+  // 2️⃣ Generate stable ID
+  const imageId = id();
+
+  // 3️⃣ Create image using update (InstantDB way)
+  await db.transact([
+    db.tx.images[imageId].update({
+      createdAt: Date.now(),
+      unsplashId: img.id,          // REQUIRED
+      url: img.urls.regular,       // REQUIRED
+      description: img.alt_description || "",
+    }),
+  ]);
+};
+
+
 
   return (
     <div className="p-6 sm:p-8">

@@ -6,7 +6,9 @@ import CommentBox from "../components/Comments/CommentsPanel";
 export default function Feed() {
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  // 🔢 FIXED ITEMS PER PAGE
+  const itemsPerPage = 8;
 
   // ✏️ Edit state
   const [editingId, setEditingId] = useState(null);
@@ -16,6 +18,9 @@ export default function Feed() {
 
   const { data } = db.useQuery({
     images: {
+      $: {
+        limit: 100,
+      },
       reactions: { user: {} },
       comments: { user: {} },
     },
@@ -24,18 +29,23 @@ export default function Feed() {
   const images = data?.images || [];
   const selectedImage = images.find((img) => img.id === selectedImageId);
 
-  // 🗑 Delete
+  // 🔁 Reset page if images change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [images.length]);
+
+  // 🗑 Delete comment
   const handleDelete = async (commentId) => {
     await db.transact([db.tx.comments[commentId].delete()]);
   };
 
-  // ✏️ Edit
+  // ✏️ Edit comment
   const handleEdit = (comment) => {
     setEditingId(comment.id);
     setEditText(comment.text);
   };
 
-  // 💾 Save edit
+  // 💾 Save edited comment
   const saveEdit = async () => {
     if (!editText.trim()) return;
 
@@ -49,19 +59,13 @@ export default function Feed() {
     setEditText("");
   };
 
-  // 📱 Responsive pagination
-  useEffect(() => {
-    const updateItemsPerPage = () => {
-      setItemsPerPage(window.innerWidth < 640 ? 12 : 8);
-    };
-    updateItemsPerPage();
-    window.addEventListener("resize", updateItemsPerPage);
-    return () => window.removeEventListener("resize", updateItemsPerPage);
-  }, []);
-
+  // 📄 PAGINATION LOGIC
   const totalPages = Math.ceil(images.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentImages = images.slice(startIndex, startIndex + itemsPerPage);
+  const currentImages = images.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
     <div className="p-6 sm:p-8">
@@ -72,30 +76,84 @@ export default function Feed() {
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {currentImages.map((img) => (
-          <div
-            key={img.id}
-            className="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col"
-          >
-            <div
-              className="h-72 sm:h-80 lg:h-[22rem] cursor-zoom-in"
-              onClick={() => setSelectedImageId(img.id)}
-            >
-              <img
-                src={img.url}
-                className="h-full w-full object-cover"
-              />
-            </div>
+         <div
+  key={img.id}
+  className="bg-white rounded-2xl shadow-sm flex flex-col relative overflow-visible"
+>
+  {/* IMAGE */}
+  <div className="h-72 sm:h-80 lg:h-[22rem] overflow-hidden rounded-t-2xl">
+    <img
+      src={img.url}
+      className="h-full w-full object-cover cursor-zoom-in"
+      onClick={() => setSelectedImageId(img.id)}
+    />
+  </div>
 
-            <div className="px-4">
-              <EmojiBar imageId={img.id} reactions={img.reactions} />
-            </div>
+  {/* EMOJI */}
+  <div className="px-4">
+    <EmojiBar imageId={img.id} reactions={img.reactions} />
+  </div>
 
-            <div className="p-2">
-              <CommentBox imageId={img.id} />
-            </div>
-          </div>
+  {/* COMMENTS */}
+  <div className="p-2">
+    <CommentBox imageId={img.id} />
+  </div>
+</div>
+
         ))}
       </div>
+
+      {/* PAGINATION UI */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-10">
+          {/* Prev */}
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className={`px-3 py-1 rounded-lg border text-sm
+              ${
+                currentPage === 1
+                  ? "text-gray-400 border-gray-300 cursor-not-allowed"
+                  : "text-gray-700 border-gray-400 hover:bg-gray-100"
+              }`}
+          >
+            Prev
+          </button>
+
+          {/* Page Numbers */}
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const page = i + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg text-sm border
+                  ${
+                    currentPage === page
+                      ? "bg-orange-500 text-white border-orange-500"
+                      : "border-gray-400 text-gray-700 hover:bg-gray-100"
+                  }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          {/* Next */}
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className={`px-3 py-1 rounded-lg border text-sm
+              ${
+                currentPage === totalPages
+                  ? "text-gray-400 border-gray-300 cursor-not-allowed"
+                  : "text-gray-700 border-gray-400 hover:bg-gray-100"
+              }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* MODAL */}
       {selectedImage && (
@@ -104,11 +162,12 @@ export default function Feed() {
           onClick={() => setSelectedImageId(null)}
         >
           <div
-            className="bg-white w-[95%] md:w-[70%] h-[80vh] rounded-2xl flex overflow-hidden"
+            className="bg-white w-[95%] md:w-[70%] h-[80vh]
+              rounded-2xl flex flex-col md:flex-row overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* LEFT */}
-            <div className="w-1/2 bg-black relative">
+            <div className="w-full md:w-1/2 h-1/2 md:h-full bg-black relative">
               <img
                 src={selectedImage.url}
                 className="absolute inset-0 w-full h-full object-cover"
@@ -116,7 +175,7 @@ export default function Feed() {
             </div>
 
             {/* RIGHT */}
-            <div className="w-1/2 flex flex-col">
+            <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
               <div className="border-b px-4 py-3">
                 <EmojiBar
                   imageId={selectedImage.id}
@@ -131,7 +190,7 @@ export default function Feed() {
                   return (
                     <div
                       key={c.id}
-                      className="group rounded-lg p-2 bg-gray-50"
+                      className="rounded-lg p-2 bg-gray-50"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
@@ -146,11 +205,11 @@ export default function Feed() {
                                 onChange={(e) =>
                                   setEditText(e.target.value)
                                 }
-                                className="w-full border border-blue-400 rounded-xl px-3 py-2 text-base focus:outline-none"
+                                className="w-full border border-blue-400 rounded-xl px-3 py-2"
                               />
                               <button
                                 onClick={saveEdit}
-                                className="px-3 cursor-pointer py-1 text-sm rounded bg-green-600 text-white"
+                                className="px-3 py-1 text-sm rounded bg-green-600 text-white"
                               >
                                 Save
                               </button>
@@ -163,16 +222,16 @@ export default function Feed() {
                         </div>
 
                         {isOwner && (
-                          <div className="flex gap-2  transition">
+                          <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(c)}
-                              className="text-sm font-semibold cursor-pointer text-blue-500"
+                              className="text-sm font-semibold text-blue-500"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDelete(c.id)}
-                              className="text-sm font-semibold cursor-pointer text-red-500"
+                              className="text-sm font-semibold text-red-500"
                             >
                               Delete
                             </button>

@@ -1,7 +1,8 @@
+import { useState, useRef, useEffect } from "react";
+
 import { db } from "../../db.js";
 import { id } from "@instantdb/react";
-
-const EMOJIS = ["❤️", "🔥", "😂"];
+import EmojiPicker from "emoji-picker-react";
 
 const groupReactions = (reactions = []) => {
   const map = {};
@@ -11,38 +12,59 @@ const groupReactions = (reactions = []) => {
   return map;
 };
 
-export default function EmojiBar({ imageId, reactions }) {
-  const counts = groupReactions(reactions);
+export default function EmojiBar({ imageId, reactions = [] }) {
+  const [showPicker, setShowPicker] = useState(false);
+  const pickerRef = useRef(null);
 
+
+  useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (
+      pickerRef.current &&
+      !pickerRef.current.contains(e.target)
+    ) {
+      setShowPicker(false);
+    }
+  };
+
+  if (showPicker) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showPicker]);
+
+
+
+  const counts = groupReactions(reactions);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔍 find current user's reaction (if any)
-  const myReaction = reactions?.find(
+  // 🔍 current user's reaction
+  const myReaction = reactions.find(
     (r) => r.user?.id === user?.id
   );
 
   const toggleReaction = async (emoji) => {
     if (!user) return;
 
-    // 1️⃣ If user already reacted
-    if (myReaction) {
-      // same emoji → UNDO
-      if (myReaction.emoji === emoji) {
-        await db.transact([
-          db.tx.reactions[myReaction.id].delete(),
-        ]);
-      } 
-      // different emoji → UPDATE
-      else {
-        await db.transact([
-          db.tx.reactions[myReaction.id].update({
-            emoji,
-            createdAt: Date.now(),
-          }),
-        ]);
-      }
+    // same emoji → remove
+    if (myReaction && myReaction.emoji === emoji) {
+      await db.transact([
+        db.tx.reactions[myReaction.id].delete(),
+      ]);
     }
-    // 2️⃣ No reaction yet → CREATE
+    // update emoji
+    else if (myReaction) {
+      await db.transact([
+        db.tx.reactions[myReaction.id].update({
+          emoji,
+          createdAt: Date.now(),
+        }),
+      ]);
+    }
+    // create reaction
     else {
       await db.transact([
         db.tx.reactions[id()].update({
@@ -53,34 +75,52 @@ export default function EmojiBar({ imageId, reactions }) {
         }),
       ]);
     }
+
+    setShowPicker(false);
   };
 
   return (
-    <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-      {EMOJIS.map((emoji) => (
+    <div className="relative flex gap-2 mt-2 items-center">
+      {/* EXISTING REACTIONS */}
+      {Object.entries(counts).map(([emoji, count]) => (
         <button
           key={emoji}
           onClick={() => toggleReaction(emoji)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            border: "1px solid #ddd",
-            borderRadius: 16,
-            padding: "4px 10px",
-            cursor: "pointer",
-            background:
-              myReaction?.emoji === emoji ? "#eee" : "#fff",
-          }}
+          className={`flex items-center gap-1 border rounded-full px-3 py-1 text-sm
+            ${
+              myReaction?.emoji === emoji
+                ? "bg-gray-200"
+                : "bg-white"
+            }`}
         >
-          <span style={{ fontSize: 16 }}>{emoji}</span>
-          {counts[emoji] && (
-            <span style={{ fontSize: 13, fontWeight: 600 }}>
-              {counts[emoji]}
-            </span>
-          )}
+          <span>{emoji}</span>
+          <span className="font-semibold">{count}</span>
         </button>
       ))}
+
+      {/* ADD EMOJI BUTTON */}
+      <button
+        onClick={() => setShowPicker((p) => !p)}
+        className="border rounded-full px-3 py-1 text-sm bg-white hover:bg-gray-100"
+      >
+        ➕
+      </button>
+
+      {/* EMOJI PICKER */}
+     {showPicker && (
+  <div
+    ref={pickerRef}
+    className="absolute top-12 right-0 z-50 bg-white shadow-xl rounded-xl"
+  >
+
+          <EmojiPicker
+            onEmojiClick={(e) => toggleReaction(e.emoji)}
+            theme="light"
+            searchDisabled
+            lazyLoadEmojis
+          />
+        </div>
+      )}
     </div>
   );
 }

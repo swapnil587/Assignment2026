@@ -64,15 +64,12 @@ export default function GalleryGrid({ onSelect, savedImages }) {
                 <button
                   disabled={isSaved}
                   onClick={(e) => {
-                    e.stopPropagation();
-                    if (!isSaved) {
-                      onSelect({
-                        unsplashId: img.id,
-                        url: img.urls.regular,
-                        description: img.alt_description,
-                      });
-                    }
-                  }}
+  e.stopPropagation();
+  if (!isSaved) {
+    onSelect(img); // ✅ PASS FULL UNSPLASH OBJECT
+  }
+}}
+
                   className={`text-sm px-4 py-1 rounded-full font-semibold transition
                     ${
                       isSaved
