@@ -41,7 +41,7 @@ export default function EmojiBar({ imageId, reactions = [] }) {
   const counts = groupReactions(reactions);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔍 current user's reaction
+  // current user's reaction
   const myReaction = reactions.find(
     (r) => r.user?.id === user?.id
   );

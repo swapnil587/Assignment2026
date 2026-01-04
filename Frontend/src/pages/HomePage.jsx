@@ -8,21 +8,21 @@ export default function Home() {
   });
 
 const saveImage = async (img) => {
-  // 1️⃣ Prevent duplicate saves
+  //  Prevent duplicate saves
   const existing = data?.images?.find(
     (i) => i.unsplashId === img.id
   );
   if (existing) return;
 
-  // 2️⃣ Generate stable ID
+  //  Generate stable ID
   const imageId = id();
 
-  // 3️⃣ Create image using update (InstantDB way)
+  // Create image using update (InstantDB way)
   await db.transact([
     db.tx.images[imageId].update({
       createdAt: Date.now(),
-      unsplashId: img.id,          // REQUIRED
-      url: img.urls.regular,       // REQUIRED
+      unsplashId: img.id,          
+      url: img.urls.regular,       
       description: img.alt_description || "",
     }),
   ]);

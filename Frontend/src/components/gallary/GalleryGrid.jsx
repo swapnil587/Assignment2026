@@ -3,7 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchImages } from "../../api/unplash.js";
 
 export default function GalleryGrid({ onSelect, savedImages }) {
-  const { data = [], isLoading, error } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["unsplash-images"],
     queryFn: () => fetchImages(1),
   });
@@ -11,7 +15,7 @@ export default function GalleryGrid({ onSelect, savedImages }) {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(20);
 
-  // 🔥 Responsive pagination
+  // Responsive pagination
   useEffect(() => {
     const updatePerPage = () => {
       setPerPage(window.innerWidth < 640 ? 12 : 20);
@@ -21,7 +25,7 @@ export default function GalleryGrid({ onSelect, savedImages }) {
     return () => window.removeEventListener("resize", updatePerPage);
   }, []);
 
-  // ✅ Create Set of saved unsplash IDs
+  // Create Set of saved unsplash IDs
   const savedSet = useMemo(() => {
     return new Set(savedImages.map((img) => img.unsplashId));
   }, [savedImages]);
@@ -35,7 +39,7 @@ export default function GalleryGrid({ onSelect, savedImages }) {
 
   return (
     <>
-      {/* 🖼 IMAGE GRID */}
+      {/*  IMAGE GRID */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-h-[80vh] overflow-y-auto pr-2 scrollbar-hide">
         {visibleImages.map((img) => {
           const isSaved = savedSet.has(img.id);
@@ -60,16 +64,15 @@ export default function GalleryGrid({ onSelect, savedImages }) {
                   {img.alt_description || "Unsplash Photo"}
                 </span>
 
-                {/* 🔥 SMART SAVE BUTTON */}
+                {/* SMART SAVE BUTTON */}
                 <button
                   disabled={isSaved}
                   onClick={(e) => {
-  e.stopPropagation();
-  if (!isSaved) {
-    onSelect(img); // ✅ PASS FULL UNSPLASH OBJECT
-  }
-}}
-
+                    e.stopPropagation();
+                    if (!isSaved) {
+                      onSelect(img); //  PASS FULL UNSPLASH OBJECT
+                    }
+                  }}
                   className={`text-sm px-4 py-1 rounded-full font-semibold transition
                     ${
                       isSaved

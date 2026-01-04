@@ -7,10 +7,10 @@ export default function Feed() {
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 🔢 FIXED ITEMS PER PAGE
+  // FIXED ITEMS PER PAGE
   const itemsPerPage = 8;
 
-  // ✏️ Edit state
+  //  Edit state
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
 
@@ -29,23 +29,23 @@ export default function Feed() {
   const images = data?.images || [];
   const selectedImage = images.find((img) => img.id === selectedImageId);
 
-  // 🔁 Reset page if images change
+  // Reset page if images change
   useEffect(() => {
     setCurrentPage(1);
   }, [images.length]);
 
-  // 🗑 Delete comment
+  // Delete comment
   const handleDelete = async (commentId) => {
     await db.transact([db.tx.comments[commentId].delete()]);
   };
 
-  // ✏️ Edit comment
+  // Edit comment
   const handleEdit = (comment) => {
     setEditingId(comment.id);
     setEditText(comment.text);
   };
 
-  // 💾 Save edited comment
+  // Save edited comment
   const saveEdit = async () => {
     if (!editText.trim()) return;
 
@@ -59,7 +59,7 @@ export default function Feed() {
     setEditText("");
   };
 
-  // 📄 PAGINATION LOGIC
+  // PAGINATION LOGIC
   const totalPages = Math.ceil(images.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentImages = images.slice(

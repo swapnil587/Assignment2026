@@ -1,4 +1,3 @@
-// Docs: https://www.instantdb.com/docs/modeling-data
 
 import { i } from "@instantdb/react";
 
@@ -123,7 +122,7 @@ const _schema = i.schema({
   rooms: {},
 });
 
-// This helps Typescript display nicer intellisense
+
 type _AppSchema = typeof _schema;
 interface AppSchema extends _AppSchema {}
 const schema: AppSchema = _schema;
