@@ -22,6 +22,7 @@ const _schema = i.schema({
     comments: i.entity({
       createdAt: i.number(),
       text: i.string(),
+      editedAt: i.number().optional(),
     }),
     images: i.entity({
       createdAt: i.number(),
